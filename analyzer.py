@@ -11,7 +11,7 @@ numbernicks = int(len(nicknames_split))
 
 #change the API region if necessary
 #other regions: br1, eun1, euw1, jp1, kr, la1, la2, na1, oc1, tr1, ru
-API_key = '?api_key=RGAPI-c24979de-a741-4f60-8323-384520b80473' #put your API key here
+API_key = '?api_key=YOUR_API_KEY' #put your API key here
 URL_nickfront = 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
 URL_activegame = 'https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/'
 URL_matchhistory = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
