@@ -1,6 +1,7 @@
 from time import time
 from datetime import date, datetime
 import requests, re, math, os
+from tokens import API_KEY
 
 
 nicknames = input("\33[1mPlayers name: ")
@@ -9,7 +10,7 @@ nicknames_list = nicknames.split(",")
 
 # Change the API region if necessary
 # Other regions: br1, eun1, euw1, jp1, kr, la1, la2, na1, oc1, tr1, ru
-API_KEY = '?api_key=RIOT_API_KEY_HERE' #put your API key here
+
 URL_PLAYER_DATA = 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
 URL_ACTIVE_GAME = 'https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/'
 URL_matchhistory = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
