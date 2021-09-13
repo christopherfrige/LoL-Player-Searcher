@@ -3,18 +3,16 @@ from datetime import date, datetime
 import requests, re, math, os
 from tokens import API_KEY
 
-
 nicknames = input("\33[1mPlayers name: ")
 nicknames_list = nicknames.split(",")
-
 
 # Change the API region if necessary
 # Other regions: br1, eun1, euw1, jp1, kr, la1, la2, na1, oc1, tr1, ru
 
 URL_PLAYER_DATA = 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
 URL_ACTIVE_GAME = 'https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/'
-URL_matchhistory = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
-URL_match = "https://br1.api.riotgames.com/lol/match/v4/matches/"
+URL_MATCH_HISTORY = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
+URL_MATCH = "https://br1.api.riotgames.com/lol/match/v4/matches/"
 
 def get_player_data(nickname):
     idfinder = requests.get(URL_PLAYER_DATA + nickname + API_KEY)
@@ -45,54 +43,59 @@ def get_active_game_message(nickname):
         else:
             print(f"\033[1;31m{nickname} => IN GAME")
             print(f"The player has been in game for: {gameLength} minute(s)")
+        return True
     else:
         print(f"\033[1;36m{nickname} => NOT PLAYING")
 
-'''
-def searcher():    
-    #Match History part =====================
+def get_last_game_id(nickname):
+    playerData = get_player_data(nickname)
+    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + API_KEY)
+    matchHistoryData = matchHistory.json()
+    
+    return matchHistoryData['matches'][0]['gameId']
 
-    matchhistory = requests.get(URL_matchhistory + accountid + API_key)#pega o timestamp da ultima partida    
-    rawhistory  = matchhistory.text
-    rawhistory = rawhistory.split('"')
+def get_game_data(nickname):
+    gameID = get_last_game_id(nickname)
+    game = requests.get(URL_MATCH + str(gameID) + API_KEY)
 
-    startGame = rawhistory[16]#pega os numeros do timestamp
-    startGame = re.sub(r'\D', '', startGame)#tira os não-numéricos
-    startGame = (int(startGame)/1000) #transforma em milissegundos em segundos
+    return game.json()
 
-    gameid = rawhistory[8]#pega os numeros do gameid
-    gameid = re.sub(r"\D", '', gameid)#remove os não-numéricos
+def get_time_since_last_game(nickname):
+    gameData = get_game_data(nickname)
 
-    match = requests.get(URL_match + gameid + API_key)#usando o gameid que pegou acima, adquire outras informações
-    rawinfomatch = match.text
-    rawinfomatch = rawinfomatch.split('"')
+    timeStartGame = gameData['gameCreation']
+    gameDuration = gameData['gameDuration']
 
-    gameDuration = rawinfomatch[10]#pega o timestamp de duração do jogo
-    gameDuration = re.sub(r"\D", "", gameDuration)#remove os não-numéricos
-    #print(gameDuration)
-    gameDuration = int(gameDuration)
+    timeEndGame = (timeStartGame + gameDuration)/1000
+    nowTime = time()
 
-    endGame = startGame + gameDuration #timestamp de quando finalizou o jogo
-    timestampatual = time() #timestamp do momento atual
+    timeGap = nowTime - timeEndGame
 
-    lastmatch_seconds = timestampatual - endGame #intervalo de tempo em SEGUNDOS desde que acabou a última partida
-    lastmatch_minutes = math.ceil(lastmatch_seconds/60)
-    lastmatch_hours = math.ceil(lastmatch_seconds/3600)
+    return {
+        "inSeconds": timeGap,
+        "inMinutes": round(timeGap/60),
+        "inHours": round(timeGap/3600),
+        "inDays": round(timeGap/86400)        
+    }
 
-    if lastmatch_seconds <= 900:
-        print("Finished a match recently, probaly in queue.")
-        print("Time since last match: ", lastmatch_minutes, " minutes")
+def get_last_game_message(nickname):
+    timeLastGame = get_time_since_last_game(nickname)
+
+    if timeLastGame['inSeconds'] <= 900:
+        print(f"Finished a match recently, probaly in queue.")
+        print(f"Time since last match: {timeLastGame['inMinutes']} minutes")
+    elif timeLastGame['inMinutes'] < 60:
+        print(f"Time since last match: {timeLastGame['inMinutes']} minutes")
+    elif timeLastGame['inMinutes'] >= 60 and timeLastGame['inMinutes'] <= 1440:
+        print(f"Time since last match:  {timeLastGame['inHours']} hour(s)")
     else:
-        if lastmatch_minutes < 60:
-            print("Time since last match: ", lastmatch_minutes, " minutes")
-        elif lastmatch_minutes >= 60 and lastmatch_minutes <= 1440:
-            print("Time since last match: ", lastmatch_hours, " hour(s)")
-        else:
-            print("This player is offline more than 1 day.")
-'''
+        print(f"This player is offline more than {timeLastGame['inDays']} day(s).")
+
 
 # To search every nickname and run the function
 for nickname in nicknames_list:
     nickname = nickname.strip()
-    get_active_game_message(nickname)
+    ingame = get_active_game_message(nickname)
+    if not ingame:
+        get_last_game_message(nickname)
     print("-"*40)
