@@ -9,7 +9,7 @@ nicknames_list = nicknames.split(",")
 
 # Change the API region if necessary
 # Other regions: br1, eun1, euw1, jp1, kr, la1, la2, na1, oc1, tr1, ru
-API_KEY = '?api_key=RGAPI-b96c3f33-d8db-4c67-aa7a-e778e9f45585' #put your API key here
+API_KEY = '?api_key=RIOT_API_KEY_HERE' #put your API key here
 URL_PLAYER_DATA = 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
 URL_ACTIVE_GAME = 'https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/'
 URL_matchhistory = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
@@ -17,17 +17,17 @@ URL_match = "https://br1.api.riotgames.com/lol/match/v4/matches/"
 
 def get_player_data(nickname):
     idfinder = requests.get(URL_PLAYER_DATA + nickname + API_KEY)
-    player_data = idfinder.json()
+    playerData = idfinder.json()
 
     return {
-        "encryptedid": player_data['id'],
-        "accountid": player_data['accountId']
+        "encryptedid": playerData['id'],
+        "accountid": playerData['accountId']
     }
 
 def get_active_game_data(nickname):
-    encryptedid = get_player_data(nickname)
+    playerID= get_player_data(nickname)
     # Checks if the player is in an active game, returning a status code
-    activegame = requests.get(URL_ACTIVE_GAME + encryptedid['encryptedid'] + API_KEY)
+    activegame = requests.get(URL_ACTIVE_GAME + playerID['encryptedid'] + API_KEY)
 
     return {
         "response": activegame.json(), 
@@ -36,15 +36,14 @@ def get_active_game_data(nickname):
 
 def get_active_game_message(nickname):
     activeGameData = get_active_game_data(nickname)
-
     if activeGameData['status_code'] == 200:
-        print(f"\033[1;31m{nickname} => IN GAME")
         gameLength = activeGameData['response']['gameLength']
         gameLength = math.ceil(gameLength/60)
-        print(f"The player has been in game for: {gameLength} minute(s)")
         if gameLength < 0:
-            print("(Loading screen)")
-        return
+            print("IN LOADING SCREEN")
+        else:
+            print(f"\033[1;31m{nickname} => IN GAME")
+            print(f"The player has been in game for: {gameLength} minute(s)")
     else:
         print(f"\033[1;36m{nickname} => NOT PLAYING")
 
