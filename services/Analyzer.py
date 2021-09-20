@@ -1,18 +1,7 @@
 from time import time
-from datetime import date, datetime
-import requests, re, math, os
-from tokens import API_KEY
-
-nicknames = input("\33[1mPlayers name: ")
-nicknames_list = nicknames.split(",")
-
-# Change the API region if necessary
-# Other regions: br1, eun1, euw1, jp1, kr, la1, la2, na1, oc1, tr1, ru
-
-URL_PLAYER_DATA = 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
-URL_ACTIVE_GAME = 'https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/'
-URL_MATCH_HISTORY = "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
-URL_MATCH = "https://br1.api.riotgames.com/lol/match/v4/matches/"
+import requests, math
+from utils.tokens import API_KEY
+from utils.GlobalVariables import URL_PLAYER_DATA, URL_ACTIVE_GAME, URL_MATCH_HISTORY, URL_MATCH
 
 def get_player_data(nickname):
     idfinder = requests.get(URL_PLAYER_DATA + nickname + API_KEY)
@@ -24,7 +13,7 @@ def get_player_data(nickname):
     }
 
 def get_active_game_data(nickname):
-    playerID= get_player_data(nickname)
+    playerID = get_player_data(nickname)
     # Checks if the player is in an active game, returning a status code
     activegame = requests.get(URL_ACTIVE_GAME + playerID['encryptedid'] + API_KEY)
 
@@ -91,11 +80,3 @@ def get_last_game_message(nickname):
     else:
         print(f"This player is offline more than {timeLastGame['inDays']} day(s).")
 
-
-# To search every nickname and run the function
-for nickname in nicknames_list:
-    nickname = nickname.strip()
-    ingame = get_active_game_message(nickname)
-    if not ingame:
-        get_last_game_message(nickname)
-    print("-"*40)
