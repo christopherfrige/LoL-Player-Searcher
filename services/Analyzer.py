@@ -1,10 +1,10 @@
 from time import time
 import requests, math
-from utils.tokens import API_KEY
+from utils.EnviromentVariables import RIOT_API_KEY
 from utils.GlobalVariables import URL_PLAYER_DATA, URL_ACTIVE_GAME, URL_MATCH_HISTORY, URL_MATCH
 
 def get_player_data(nickname):
-    idfinder = requests.get(URL_PLAYER_DATA + nickname + API_KEY)
+    idfinder = requests.get(URL_PLAYER_DATA + nickname + RIOT_API_KEY)
     playerData = idfinder.json()
 
     return {
@@ -15,7 +15,7 @@ def get_player_data(nickname):
 def get_active_game_data(nickname):
     playerID = get_player_data(nickname)
     # Checks if the player is in an active game, returning a status code
-    activegame = requests.get(URL_ACTIVE_GAME + playerID['encryptedid'] + API_KEY)
+    activegame = requests.get(URL_ACTIVE_GAME + playerID['encryptedid'] + RIOT_API_KEY)
 
     return {
         "response": activegame.json(), 
@@ -38,14 +38,14 @@ def get_active_game_message(nickname):
 
 def get_last_game_id(nickname):
     playerData = get_player_data(nickname)
-    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + API_KEY)
+    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + RIOT_API_KEY)
     matchHistoryData = matchHistory.json()
     
     return matchHistoryData['matches'][0]['gameId']
 
 def get_game_data(nickname):
     gameID = get_last_game_id(nickname)
-    game = requests.get(URL_MATCH + str(gameID) + API_KEY)
+    game = requests.get(URL_MATCH + str(gameID) + RIOT_API_KEY)
 
     return game.json()
 
