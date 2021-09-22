@@ -1,5 +1,4 @@
-from time import time
-import requests, math
+import requests, time
 from utils.EnviromentVariables import RIOT_API_KEY
 from utils.GlobalVariables import URL_PLAYER_DATA, URL_ACTIVE_GAME, URL_MATCH_HISTORY, URL_MATCH
 
@@ -26,7 +25,7 @@ def get_active_game_message(nickname):
     activeGameData = get_active_game_data(nickname)
     if activeGameData['status_code'] == 200:
         gameLength = activeGameData['response']['gameLength']
-        gameLength = math.ceil(gameLength/60)
+        gameLength = round(gameLength/60)
         if gameLength < 0:
             print("IN LOADING SCREEN")
         else:
@@ -38,14 +37,14 @@ def get_active_game_message(nickname):
 
 def get_last_game_id(nickname):
     playerData = get_player_data(nickname)
-    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + RIOT_API_KEY)
+    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + RIOT_API_KEY + "&endIndex=1")
     matchHistoryData = matchHistory.json()
     
-    return matchHistoryData['matches'][0]['gameId']
+    return str(matchHistoryData['matches'][0]['gameId'])    
 
 def get_game_data(nickname):
     gameID = get_last_game_id(nickname)
-    game = requests.get(URL_MATCH + str(gameID) + RIOT_API_KEY)
+    game = requests.get(URL_MATCH + gameID + RIOT_API_KEY)
 
     return game.json()
 
@@ -56,7 +55,7 @@ def get_time_since_last_game(nickname):
     gameDuration = gameData['gameDuration']
 
     timeEndGame = (timeStartGame + gameDuration)/1000
-    nowTime = time()
+    nowTime = time.time()
 
     timeGap = nowTime - timeEndGame
 
@@ -79,4 +78,3 @@ def get_last_game_message(nickname):
         print(f"Time since last match:  {timeLastGame['inHours']} hour(s)")
     else:
         print(f"This player is offline more than {timeLastGame['inDays']} day(s).")
-
