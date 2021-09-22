@@ -17,7 +17,7 @@ It works using Riot Games API, and you can just run the program and type the nic
 ## Introduction
 
 Clone the repository to a local folder and configure as described in the following topics.
-## Configurando o ambiente
+## Environment settings
 
 - **Setting the Environment Variables:**
 
