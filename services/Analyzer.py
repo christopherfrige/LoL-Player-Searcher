@@ -1,80 +1,27 @@
-import requests, time
-from utils.EnviromentVariables import RIOT_API_KEY
-from utils.GlobalVariables import URL_PLAYER_DATA, URL_ACTIVE_GAME, URL_MATCH_HISTORY, URL_MATCH
+import time
+from utils.GlobalVariables import URL_ACTIVE_GAME, URL_MATCHHISTORY_IDS, URL_MATCH_DATA
+from services.Player import Player
+from services.Requester import Requester
+from utils.TimeHandler import time_since_given_timestamp
 
-def get_player_data(nickname):
-    idfinder = requests.get(URL_PLAYER_DATA + nickname + RIOT_API_KEY)
-    playerData = idfinder.json()
+class Analyzer:
+    def __init__(self, nickname):
+        self.player = Player(nickname)
+        self.requester = Requester()
 
-    return {
-        "encryptedid": playerData['id'],
-        "accountid": playerData['accountId']
-    }
+    def get_active_game_status(self):
+        active_game = self.requester.get_content(URL_ACTIVE_GAME + self.player['encryptedid'])
 
-def get_active_game_data(nickname):
-    playerID = get_player_data(nickname)
-    # Checks if the player is in an active game, returning a status code
-    activegame = requests.get(URL_ACTIVE_GAME + playerID['encryptedid'] + RIOT_API_KEY)
+        if active_game.status_code == 200:
+            gameLength = active_game.json()['gameLength']
+            return round(gameLength/60)
+        return False
 
-    return {
-        "response": activegame.json(), 
-        "status_code": activegame.status_code
-    }
+    def get_matchhistory_games_id(self):
+        return self.requester.get(URL_MATCHHISTORY_IDS + self.player['puuid'] + "/ids")
 
-def get_active_game_message(nickname):
-    activeGameData = get_active_game_data(nickname)
-    if activeGameData['status_code'] == 200:
-        gameLength = activeGameData['response']['gameLength']
-        gameLength = round(gameLength/60)
-        if gameLength < 0:
-            print("IN LOADING SCREEN")
-        else:
-            print(f"\033[1;31m{nickname} => IN GAME")
-            print(f"The player has been in game for: {gameLength} minute(s)")
-        return True
-    else:
-        print(f"\033[1;36m{nickname} => NOT PLAYING")
-
-def get_last_game_id(nickname):
-    playerData = get_player_data(nickname)
-    matchHistory = requests.get(URL_MATCH_HISTORY + playerData['accountid'] + RIOT_API_KEY + "&endIndex=1")
-    matchHistoryData = matchHistory.json()
-    
-    return str(matchHistoryData['matches'][0]['gameId'])    
-
-def get_game_data(nickname):
-    gameID = get_last_game_id(nickname)
-    game = requests.get(URL_MATCH + gameID + RIOT_API_KEY)
-
-    return game.json()
-
-def get_time_since_last_game(nickname):
-    gameData = get_game_data(nickname)
-
-    timeStartGame = gameData['gameCreation']
-    gameDuration = gameData['gameDuration']
-
-    timeEndGame = (timeStartGame + gameDuration)/1000
-    nowTime = time.time()
-
-    timeGap = nowTime - timeEndGame
-
-    return {
-        "inSeconds": timeGap,
-        "inMinutes": round(timeGap/60),
-        "inHours": round(timeGap/3600),
-        "inDays": round(timeGap/86400)        
-    }
-
-def get_last_game_message(nickname):
-    timeLastGame = get_time_since_last_game(nickname)
-
-    if timeLastGame['inSeconds'] <= 900:
-        print(f"Finished a match recently, probaly in queue.")
-        print(f"Time since last match: {timeLastGame['inMinutes']} minutes")
-    elif timeLastGame['inMinutes'] < 60:
-        print(f"Time since last match: {timeLastGame['inMinutes']} minutes")
-    elif timeLastGame['inMinutes'] >= 60 and timeLastGame['inMinutes'] <= 1440:
-        print(f"Time since last match:  {timeLastGame['inHours']} hour(s)")
-    else:
-        print(f"This player is offline more than {timeLastGame['inDays']} day(s).")
+    def get_time_since_last_game(self):
+        last_game = self.requester.get(URL_MATCH_DATA + self.player['puuid'])
+        game_info = last_game['info']
+        # Divided by 1000 because that timestamp is given by Riot API in milisseconds
+        return time_since_given_timestamp(game_info['gameStartTimestamp']/1000 + game_info['gameDuration'])
