@@ -1,10 +1,9 @@
 # league-player-searcher
 
-## Introduction
-
 The league-player-searcher is a project that helps people who want to know the status of others League of Legends players,maybe for some scouting or champion select sniping.
 
 It works using Riot Games API, and you can just run the program and type the nickname of the players (separated by commas) that you want to look into.
+
 
 <div align="center">
 	<img width=60% src="https://i.imgur.com/HyKDvcX.png"><br>
@@ -15,6 +14,9 @@ It works using Riot Games API, and you can just run the program and type the nic
 - [Python 3.8+](https://www.python.org/downloads/ "Download Python")
 - Requests library
 
+## Introduction
+
+Clone the repository to a local folder and configure as described in the following topics.
 ## Environment settings
 
 - **Setting the Environment Variables:**

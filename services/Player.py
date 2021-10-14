@@ -16,5 +16,5 @@ class Player:
 
 
 if __name__ == "__main__":
-    Test = Player("Koshi o Dulista")
+    Test = Player("Koshi o Duelista")
     print(Test.get_ids())
