@@ -20,7 +20,8 @@ def generate_dict(player):
                     "gameLenght": is_playing} 
                 }
     else:
-        game_info = {"timeLastGame": player_analysis.get_time_since_last_game()}    
+        game_info = {"timeLastGame": player_analysis.get_time_since_last_game()}  
+    
     main_structure.update(game_info)
 
-    return game_info
+    return main_structure
