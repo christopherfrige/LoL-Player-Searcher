@@ -2,20 +2,25 @@ from services.Analyzer import Analyzer
 
 def generate_dict(player):
     player_analysis = Analyzer(player)
+    main_structure = {
+            "name": player,
+            "inGame": 
+                {                  
+                    "status": player_analysis.get_active_game_status()
+                },              
+            }
 
-    player_info = {"name": player,
-                "status": player_analysis.get_active_game_status(),
-                "timeLastGame": player_analysis.get_time_since_last_game()                
-                }
+    is_playing = main_structure['inGame']['status']
 
-
-    is_playing = player_info['status']
     if is_playing:
-        player_info.pop("timeLastGame")
-        player_info.update({
-            "status": "True",
-            "gameLenght": player_info['status']
-        })
+        game_info = {
+            "inGame": 
+                {
+                    "status": True,                  
+                    "gameLenght": is_playing} 
+                }
+    else:
+        game_info = {"timeLastGame": player_analysis.get_time_since_last_game()}    
+    main_structure.update(game_info)
 
-
-    return player_info
+    return game_info
