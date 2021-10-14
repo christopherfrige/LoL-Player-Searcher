@@ -1,18 +1,19 @@
-from services.Analyzer import get_active_game_message, get_last_game_message
-import time
+from utils.DictGenerator import generate_dict
 
-nicknames = input("\33[1mPlayers name: ")
-nicknames_list = nicknames.split(",")
+def main():
+    # For testing purposes
+    nicknames = "Koshi o Duelista, Nishinoya141"
+    nicknames_list = nicknames.split(",")
 
-timeStart = time.time()
-# To search every nickname and run the function
-for nickname in nicknames_list:
-    nickname = nickname.strip()
-    ingame = get_active_game_message(nickname)
-    if not ingame:
-        get_last_game_message(nickname)
-    print("-"*40)
+    players = []
+    for nickname in nicknames_list:
+        players.append(generate_dict(nickname)) 
 
-timeEnd = time.time()
+    return players
 
-print(f"\33[1mThe total time of the analysis was: {timeEnd - timeStart:.2f}s")
+if __name__ == "__main__":
+    import time
+    timeStart = time.time()
+    print(main())
+    timeEnd = time.time()
+    print(f"The total time of the analysis was: {timeEnd - timeStart:.2f}s")
