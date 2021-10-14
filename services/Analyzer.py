@@ -10,8 +10,8 @@ class Analyzer:
 
     def get_active_game_status(self):
         active_game = self.requester.get_content(URL_ACTIVE_GAME + self.player['id'])
-        if active_game.status_code == 200:
-            gameLength = active_game.json()['gameLength']
+        if isinstance(active_game, dict):
+            gameLength = active_game['gameLength']
             return round(gameLength/60)
         return False
 
