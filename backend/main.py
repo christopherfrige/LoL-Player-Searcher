@@ -1,4 +1,4 @@
-from utils.DictGenerator import generate_dict
+from utils.dict_generator import generate_dict
 
 def main():
     # For testing purposes

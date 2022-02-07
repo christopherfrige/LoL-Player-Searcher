@@ -1,6 +1,6 @@
 import requests
 import json
-from utils.EnviromentVariables import RIOT_API_KEY
+from utils.enviroment_variables import RIOT_API_KEY
 
 class Requester:
     def __init__(self):
