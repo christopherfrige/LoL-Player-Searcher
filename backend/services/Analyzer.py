@@ -11,8 +11,7 @@ class Analyzer:
     def get_active_game_status(self):
         active_game = self.requester.get_content(URL_ACTIVE_GAME + self.player['id'])
         if isinstance(active_game, dict):
-            gameLength = active_game['gameLength']
-            return round(gameLength/60)
+            return active_game['gameLength']
         return False
 
     def get_matchhistory_games_id(self):
