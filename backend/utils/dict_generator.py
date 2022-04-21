@@ -1,4 +1,4 @@
-from services.Analyzer import Analyzer
+from services.analyzer import Analyzer
 
 def generate_dict(player):
     player_analysis = Analyzer(player)

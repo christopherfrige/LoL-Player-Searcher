@@ -1,5 +1,7 @@
-from services.Requester import Requester
-from utils.GlobalVariables import URL_PLAYER_DATA
+from utils.global_variables import URL_PLAYER_DATA
+
+from services.requester import Requester
+
 #URL_PLAYER_DATA = "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"
 
 class Player:

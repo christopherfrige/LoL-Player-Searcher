@@ -1,7 +1,10 @@
-from utils.GlobalVariables import URL_ACTIVE_GAME, URL_MATCHHISTORY_IDS, URL_MATCH_DATA
-from services.Player import Player
-from services.Requester import Requester
-from utils.TimeHandler import time_since_given_timestamp
+from utils.global_variables import (URL_ACTIVE_GAME, URL_MATCH_DATA,
+                                    URL_MATCHHISTORY_IDS)
+from utils.time_handler import time_since_given_timestamp
+
+from services.player import Player
+from services.requester import Requester
+
 
 class Analyzer:
     def __init__(self, nickname):

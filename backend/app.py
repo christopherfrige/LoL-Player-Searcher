@@ -1,5 +1,7 @@
 from flask import Flask, jsonify
+
 from main import main
+
 app = Flask(__name__)
 
 @app.route('/search', methods=["POST"])
