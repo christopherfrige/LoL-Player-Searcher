@@ -1,7 +1,7 @@
-from utils.global_variables import URL_ACTIVE_GAME, URL_MATCHHISTORY_IDS, URL_MATCH_DATA
+from utils.GlobalVariables import URL_ACTIVE_GAME, URL_MATCHHISTORY_IDS, URL_MATCH_DATA
 from services.Player import Player
 from services.Requester import Requester
-from utils.time_handler import time_since_given_timestamp
+from utils.TimeHandler import time_since_given_timestamp
 
 class Analyzer:
     def __init__(self, nickname):
@@ -11,7 +11,8 @@ class Analyzer:
     def get_active_game_status(self):
         active_game = self.requester.get_content(URL_ACTIVE_GAME + self.player['id'])
         if isinstance(active_game, dict):
-            return active_game['gameLength']
+            gameLength = active_game['gameLength']
+            return round(gameLength/60)
         return False
 
     def get_matchhistory_games_id(self):

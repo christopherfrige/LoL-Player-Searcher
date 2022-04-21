@@ -4,7 +4,7 @@
 # The ASIA routing value serves KR and JP.
 # The EUROPE routing value serves EUNE, EUW, TR, and RU.
 
-region = 'na1'
+region = 'br1'
 continent = "americas"
 
 URL_PLAYER_DATA = f'https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/'
