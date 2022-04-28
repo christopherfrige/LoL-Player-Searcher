@@ -1,6 +1,6 @@
-from services.analyzer import Analyzer
+from app.services.analyzer import Analyzer
 
-def generate_dict(player):
+def generate_dict_response(player):
     player_analysis = Analyzer(player)
     main_structure = {
             "name": player,

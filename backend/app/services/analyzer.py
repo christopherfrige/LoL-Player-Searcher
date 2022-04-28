@@ -1,9 +1,9 @@
-from utils.global_variables import (URL_ACTIVE_GAME, URL_MATCH_DATA,
+from app.utils.global_variables import (URL_ACTIVE_GAME, URL_MATCH_DATA,
                                     URL_MATCHHISTORY_IDS)
-from utils.time_handler import time_since_given_timestamp
+from app.utils.time_handler import time_since_given_timestamp
 
-from services.player import Player
-from services.requester import Requester
+from app.services.player import Player
+from app.services.requester import Requester
 
 
 class Analyzer:

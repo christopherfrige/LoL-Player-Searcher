@@ -1,7 +1,7 @@
 import json
 
 import requests
-from utils.enviroment_variables import RIOT_API_KEY
+from app.utils.enviroment_variables import RIOT_API_KEY
 
 
 class Requester:
@@ -18,7 +18,3 @@ class Requester:
             return json.loads(response.content)
         
         return response
-
-if __name__ == "__main__":
-    pegar_data = Requester()
-    print(pegar_data.get_content("https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/Koshi o Duelista"))
